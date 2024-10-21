@@ -66,6 +66,8 @@ public class IT2A_Group2_Lab4 {
     System.out.println("[1] Convert Infix to Post Fix");
     System.out.println();
     System.out.println("[2] Convert Postfix to Infix");
+    System.out.println();
+    System.out.println("[0] Exit");
 
     System.out.print("\nEnter your choice: ");
   }
