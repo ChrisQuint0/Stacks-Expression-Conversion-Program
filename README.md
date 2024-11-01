@@ -1,2 +1,2 @@
-# Stacks-Infix-Postfix-Program
-A program that converts infix notation to post-fix notation and vice versa. A definite application of the stack data structure.
+# Stacks-Expression-Conversion-Program
+A program that converts an expresion from infix notation to post-fix notation, from infix to prefix, and from postfix to infix
