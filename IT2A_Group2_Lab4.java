@@ -135,7 +135,7 @@ public class IT2A_Group2_Lab4 {
   public static void executeChoice(int choice) {
     switch (choice) {
       case 1:
-        // convertInfixToPostFix();
+        convertInfixToPostFix();
         clearScreen();
         System.out.println("Convert Infix to Post Fix\n");
         pause();
@@ -176,6 +176,60 @@ public class IT2A_Group2_Lab4 {
   }
 
   // Josh
+
+  public static void convertInfixToPostFix() {
+    Scanner sc = new Scanner(System.in);
+
+    while (true) {
+        clearScreen();
+        System.out.println("INFIX TO POSTFIX");
+        System.out.println("-----------------------------");
+
+        System.out.print("Enter the infix expression: ");
+        String infix = sc.nextLine().replaceAll("\\s", "");
+
+        // Validate the input expression
+        if (!isValidInfix(infix)) {
+            pause();
+            return;
+        }
+
+        StringBuilder result = new StringBuilder();
+        IT2A_Group2_Lab4 stack = new IT2A_Group2_Lab4(infix.length());
+
+        for (char c : infix.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                result.append(c); // Append operands directly to result
+            } else if (c == '(') {
+                stack.push(c); // Push '(' to stack
+            } else if (c == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    result.append(stack.pop());
+                }
+                stack.pop(); // Pop '('
+            } else if (isOperator(c)) {
+                while (!stack.isEmpty() && getPrecendence(c) <= getPrecendence(stack.peek())) {
+                    result.append(stack.pop());
+                }
+                stack.push(c); // Push current operator to stack
+            }
+        }
+
+        // Pop any remaining operators in the stack
+        while (!stack.isEmpty()) {
+            result.append(stack.pop());
+        }
+
+        System.out.println("\nInfix expression: " + infix);
+        System.out.println("Postfix expression: " + result + "\n");
+
+        // Prompt user to try again
+        System.out.print("Try Again? (Y/N): ");
+        String choice = sc.nextLine().trim().toUpperCase();
+        if (choice.equals("N")) break;
+    }
+}
+
 
   // Quinto
   public static void convertInfixToPrefix() {
@@ -350,10 +404,30 @@ public class IT2A_Group2_Lab4 {
         System.out.println("\nExpression starts with an invalid operator: " + currentChar + "\n");
         return false;
       }
+
+      // Check for leading operators after an opening parenthesis
+      if (i > 0 && expression.charAt(i - 1) == '(' && "+*/^".indexOf(currentChar) != -1) {
+        System.out.println("\nExpression has an invalid leading operator after '(': " + currentChar + "\n");
+        return false;
+      }
+
       if (i == expression.length() - 1 && "+-*/^".indexOf(currentChar) != -1) {
         System.out.println("\nExpression ends with an invalid operator: " + currentChar + "\n");
         return false;
       }
+
+      // Check for trailing operators before a closing parenthesis
+      if (i < expression.length() - 1 && expression.charAt(i + 1) == ')' && "+-*/^".indexOf(currentChar) != -1) {
+        System.out.println("\nExpression has an invalid trailing operator before ')': " + currentChar + "\n");
+        return false;
+      }
+
+
+      // Check for missing operator between two parenthesized expressions
+      if (previousChar == ')' && currentChar == '(') {
+        System.out.println("\nMissing operator between expressions: " + previousChar + currentChar + "\n");
+        return false;
+      }   
 
       previousChar = currentChar;
     }
