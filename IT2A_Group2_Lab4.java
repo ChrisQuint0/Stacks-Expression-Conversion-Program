@@ -144,7 +144,7 @@ public class IT2A_Group2_Lab4 {
         convertInfixToPrefix();
         break;
       case 3:
-        // convertPostfixtoInfix();
+        convertPostfixtoInfix();
       default:
         break;
     }
@@ -294,6 +294,143 @@ public class IT2A_Group2_Lab4 {
 
     return result.toString();
 
+  }
+
+  public static void convertPostfixtoInfix() {
+    while (true) {
+      clearScreen();
+      Scanner sc = new Scanner(System.in);
+
+      String postfix;
+
+      System.out.println("POSTFIX TO INFIX");
+      System.out.println("-----------------------------");
+      System.out.print("Enter the infix expression: ");
+      postfix = sc.nextLine();
+      postfix = postfix.replaceAll("\\s", "");
+
+      boolean isValid = isValidPostfix(postfix);
+
+      if (!isValid) {
+        pause();
+        return;
+      }
+
+      String infix = postfixToInfix(postfix);
+
+      System.out.println("Infix expression: " + infix);
+
+      String choice;
+
+      while (true) {
+        System.out.println("\nTry Again? (Y/N): ");
+
+        try {
+          choice = sc.nextLine().toUpperCase();
+
+          if (choice.length() > 1 || choice.charAt(0) != 'Y' && choice.charAt(0) != 'N') {
+            System.out.println("You must enter Y/N\n");
+            continue;
+          }
+
+          break;
+        } catch (InputMismatchException e) {
+          clearScreen();
+          System.out.println("ERROR!");
+          System.out.println("-------------------------");
+          System.out.println("Invalid Input\n");
+
+          pause();
+          clearScreen();
+
+          System.out.println("POSTFIX TO INFIX");
+          System.out.println("-----------------------------");
+
+        }
+
+      }
+
+      if (choice.charAt(0) == 'N') {
+        break;
+      }
+
+    }
+  }
+
+  static String postfixToInfix(String exp) {
+    StringStack stack = new StringStack(exp.length());
+
+    for (int i = 0; i < exp.length(); i++) {
+      // Push operands
+      if (!isOperator(exp.charAt(i))) {
+        stack.push(exp.charAt(i) + "");
+      }
+
+      // We assume that input is
+      // a valid postfix and expect
+      // an operator.
+      else {
+        String op1 = stack.peek();
+        stack.pop();
+        String op2 = stack.peek();
+        stack.pop();
+        stack.push("(" + op2 + exp.charAt(i) +
+            op1 + ")");
+      }
+    }
+
+    // There must be a single element
+    // in stack now which is the required
+    // infix.
+    return stack.peek();
+  }
+
+  public static boolean isValidPostfix(String expression) {
+
+    if (expression.isEmpty()) {
+      System.out.println("Given expression is empty!");
+      return false;
+    }
+    for (int i = 0; i < expression.length(); i++) {
+      char currentChar = expression.charAt(i);
+
+      // Check for valid characters
+      if (!Character.isLetterOrDigit(currentChar) &&
+          "+-*/^()".indexOf(currentChar) == -1) {
+        System.out.println("\nInvalid character detected: " + currentChar + "\n");
+        return false;
+      }
+
+      // check if first character is an operator
+      if (i == 0 && isOperator(currentChar)) {
+        System.out.println("Operators cannot be in the first position or come before operands!");
+        return false;
+      }
+
+    }
+
+    // check amount of operands to operators
+    int operatorAmount = 0;
+    int operandsAmount = 0;
+    for (int i = 0; i < expression.length(); i++) {
+      char currentChar = expression.charAt(i);
+      if (isOperator(currentChar)) {
+        operatorAmount++;
+      } else {
+        operandsAmount++;
+      }
+    }
+
+    if (operatorAmount >= operandsAmount) {
+      System.out.println("Too many operators! Amount of operators must be less than the amount of operands!");
+      return false;
+    }
+
+    if (operandsAmount > operatorAmount + 1) {
+      System.out.println("Too many operands! Not enough operators available for the amount of operands!");
+      return false;
+    }
+    return true;
   }
 
   // Method to check if the input expression is a valid infix expression
