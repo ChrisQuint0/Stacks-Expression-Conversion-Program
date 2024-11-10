@@ -305,7 +305,7 @@ public class IT2A_Group2_Lab4 {
 
       System.out.println("POSTFIX TO INFIX");
       System.out.println("-----------------------------");
-      System.out.print("Enter the infix expression: ");
+      System.out.print("Enter the postfix expression: ");
       postfix = sc.nextLine();
       postfix = postfix.replaceAll("\\s", "");
 
@@ -406,7 +406,6 @@ public class IT2A_Group2_Lab4 {
         System.out.println("Operators cannot be in the first position or come before operands!");
         return false;
       }
-
     }
 
     // check amount of operands to operators
@@ -457,7 +456,6 @@ public class IT2A_Group2_Lab4 {
           System.out.println("\nUnmatched closing parenthesis detected." + "\n");
           return false;
         }
-
       }
 
       // Consecutive Operands
@@ -515,5 +513,58 @@ public class IT2A_Group2_Lab4 {
 
     sc.nextLine();
 
+  }
+}
+
+class StringStack {
+  static String[] stringStack;
+  static int stringStackTop;
+  static int stringStackCapacity;
+
+  // overloading.
+  StringStack(int size) {
+    stringStack = new String[size];
+    stringStackCapacity = size;
+    stringStackTop = -1;
+
+  }
+
+  public Boolean isEmpty() {
+    return stringStackTop == -1;
+  }
+
+  public Boolean isFull() {
+    return stringStackTop == stringStackCapacity - 1;
+  }
+
+  // overloading.
+  public void push(String x) {
+    if (isFull()) {
+      System.out.println("Overflow\nProgram Terminated\n");
+      System.exit(1);
+    }
+
+    stringStack[++stringStackTop] = x;
+  }
+
+  // overloading.
+  public String pop() {
+
+    if (isEmpty()) {
+      System.out.println("Stack is empty\n");
+      System.exit(1);
+    }
+
+    return stringStack[stringStackTop--];
+  }
+
+  // overloading.
+  public String peek() {
+    if (!(stringStackTop >= 0)) {
+      System.out.println("Stack is empty");
+      System.exit(1);
+    }
+
+    return stringStack[stringStackTop];
   }
 }
