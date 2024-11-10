@@ -12,6 +12,12 @@ import java.util.Scanner;
  * Talato, Joshua P.
  * Laboratory Excercise #2
  * Date : October 20, 2024
+ * 
+ * Test Cases:
+ * 1. (A + B) * (C - D) / (E + F * G) - H
+ * -Infix to Postfix: A B + C D - * E F G * + / H -
+ * -Infix to Prefix: - / * + A B - C D + E * F G H
+ * 
  */
 public class IT2A_Group2_Lab4 {
 
@@ -145,7 +151,7 @@ public class IT2A_Group2_Lab4 {
 
         break;
       case 3:
-        // convertPostfixtoInfix();
+
       default:
         break;
     }
@@ -177,7 +183,6 @@ public class IT2A_Group2_Lab4 {
   }
 
   // Josh
-
   public static String convertInfixToPostFix(String passedInfix) {
     Scanner sc = new Scanner(System.in);
 
@@ -231,26 +236,36 @@ public class IT2A_Group2_Lab4 {
         }
       }
 
-      // (A + B) * (C - D) / (E + F * G) - H
       // Pop any remaining operators in the stack
       while (!stack.isEmpty()) {
         result.append(stack.pop());
       }
 
+      String choice = "";
+
       if (!convertingInfixToPrefix) {
-        // A + B * (C - D)
         System.out.println("\nInfix expression: " + infix);
         System.out.println("Postfix expression: " + result + "\n");
 
         // Prompt user to try again
-        System.out.print("Try Again? (Y/N): ");
-        String choice = sc.nextLine().trim().toUpperCase();
+        while (true) {
+          System.out.print("Try Again? (Y/N): ");
+          choice = sc.nextLine().trim().toUpperCase();
 
-        if (choice.equals("N")) {
-          return "";
-        } else {
+          if (choice.equals("N")) {
+            return "";
+          } else if (choice.equals("Y")) {
+            break;
+          } else {
+            System.out.println("Invalid Input. Please enter Y/N");
+            continue;
+          }
+        }
+
+        if (choice.equals("Y")) {
           continue;
         }
+
       }
 
       convertingInfixToPrefix = false;
@@ -279,7 +294,7 @@ public class IT2A_Group2_Lab4 {
 
       if (!isValid) {
         pause();
-        return;
+        continue;
       }
 
       System.out.println("\nInfix expression: " + infix);
@@ -343,6 +358,11 @@ public class IT2A_Group2_Lab4 {
   public static boolean isValidInfix(String expression) {
     int parenthesesCount = 0;
     char previousChar = ' ';
+
+    if (expression.length() <= 0) {
+      System.out.println("Invalid. You must input an expression\n");
+      return false;
+    }
 
     for (int i = 0; i < expression.length(); i++) {
       char currentChar = expression.charAt(i);
