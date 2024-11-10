@@ -143,15 +143,13 @@ public class IT2A_Group2_Lab4 {
     switch (choice) {
       case 1:
         convertInfixToPostFix(null);
-
         clearScreen();
         break;
       case 2:
         convertInfixToPrefix();
-
         break;
       case 3:
-
+        convertPostfixtoInfix();
       default:
         break;
     }
@@ -354,6 +352,143 @@ public class IT2A_Group2_Lab4 {
     }
   }
 
+  public static void convertPostfixtoInfix() {
+    while (true) {
+      clearScreen();
+      Scanner sc = new Scanner(System.in);
+
+      String postfix;
+
+      System.out.println("POSTFIX TO INFIX");
+      System.out.println("-----------------------------");
+      System.out.print("Enter the postfix expression: ");
+      postfix = sc.nextLine();
+      postfix = postfix.replaceAll("\\s", "");
+
+      boolean isValid = isValidPostfix(postfix);
+
+      if (!isValid) {
+        pause();
+        continue;
+      }
+
+      String infix = postfixToInfix(postfix);
+
+      System.out.println("Infix expression: " + infix);
+
+      String choice;
+
+      while (true) {
+        System.out.println("\nTry Again? (Y/N): ");
+
+        try {
+          choice = sc.nextLine().toUpperCase();
+
+          if (choice.length() > 1 || choice.charAt(0) != 'Y' && choice.charAt(0) != 'N') {
+            System.out.println("You must enter Y/N\n");
+            continue;
+          }
+
+          break;
+        } catch (InputMismatchException e) {
+          clearScreen();
+          System.out.println("ERROR!");
+          System.out.println("-------------------------");
+          System.out.println("Invalid Input\n");
+
+          pause();
+          clearScreen();
+
+          System.out.println("POSTFIX TO INFIX");
+          System.out.println("-----------------------------");
+
+        }
+
+      }
+
+      if (choice.charAt(0) == 'N') {
+        break;
+      }
+
+    }
+  }
+
+  static String postfixToInfix(String exp) {
+    StringStack stack = new StringStack(exp.length());
+
+    for (int i = 0; i < exp.length(); i++) {
+      // Push operands
+      if (!isOperator(exp.charAt(i))) {
+        stack.push(exp.charAt(i) + "");
+      }
+
+      // We assume that input is
+      // a valid postfix and expect
+      // an operator.
+      else {
+        String op1 = stack.peek();
+        stack.pop();
+        String op2 = stack.peek();
+        stack.pop();
+        stack.push("(" + op2 + exp.charAt(i) +
+            op1 + ")");
+      }
+    }
+
+    // There must be a single element
+    // in stack now which is the required
+    // infix.
+    return stack.peek();
+  }
+
+  public static boolean isValidPostfix(String expression) {
+
+    if (expression.isEmpty()) {
+      System.out.println("\nGiven expression is empty!\n");
+      return false;
+    }
+
+    for (int i = 0; i < expression.length(); i++) {
+      char currentChar = expression.charAt(i);
+
+      // Check for valid characters
+      if (!Character.isLetterOrDigit(currentChar) &&
+          "+-*/^()".indexOf(currentChar) == -1) {
+        System.out.println("\nInvalid character detected: " + currentChar + "\n");
+        return false;
+      }
+
+      // check if first character is an operator
+      if (i == 0 && isOperator(currentChar)) {
+        System.out.println("\nOperators cannot be in the first position or come before operands!\n");
+        return false;
+      }
+    }
+
+    // check amount of operands to operators
+    int operatorAmount = 0;
+    int operandsAmount = 0;
+    for (int i = 0; i < expression.length(); i++) {
+      char currentChar = expression.charAt(i);
+      if (isOperator(currentChar)) {
+        operatorAmount++;
+      } else {
+        operandsAmount++;
+      }
+    }
+
+    if (operatorAmount >= operandsAmount) {
+      System.out.println("\nToo many operators! Amount of operators must be less than the amount of operands!\n");
+      return false;
+    }
+
+    if (operandsAmount > operatorAmount + 1) {
+      System.out.println("\nToo many operands! Not enough operators available for the amount of operands!\n");
+      return false;
+    }
+    return true;
+  }
+
   // Method to check if the input expression is a valid infix expression
   public static boolean isValidInfix(String expression) {
     int parenthesesCount = 0;
@@ -460,5 +595,58 @@ public class IT2A_Group2_Lab4 {
 
     sc.nextLine();
 
+  }
+}
+
+class StringStack {
+  static String[] stringStack;
+  static int stringStackTop;
+  static int stringStackCapacity;
+
+  // overloading.
+  StringStack(int size) {
+    stringStack = new String[size];
+    stringStackCapacity = size;
+    stringStackTop = -1;
+
+  }
+
+  public Boolean isEmpty() {
+    return stringStackTop == -1;
+  }
+
+  public Boolean isFull() {
+    return stringStackTop == stringStackCapacity - 1;
+  }
+
+  // overloading.
+  public void push(String x) {
+    if (isFull()) {
+      System.out.println("Overflow\nProgram Terminated\n");
+      System.exit(1);
+    }
+
+    stringStack[++stringStackTop] = x;
+  }
+
+  // overloading.
+  public String pop() {
+
+    if (isEmpty()) {
+      System.out.println("Stack is empty\n");
+      System.exit(1);
+    }
+
+    return stringStack[stringStackTop--];
+  }
+
+  // overloading.
+  public String peek() {
+    if (!(stringStackTop >= 0)) {
+      System.out.println("Stack is empty");
+      System.exit(1);
+    }
+
+    return stringStack[stringStackTop];
   }
 }
